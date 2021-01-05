@@ -19,10 +19,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private List<String> list;
 
     private int lastVisibleItem = 0;
-    private final int PAGE_COUNT = 2;
+    private final int PAGE_COUNT = 5;
     private GridLayoutManager mLayoutManager;
     private MyAdapter adapter;
     private Handler mHandler = new Handler(Looper.getMainLooper());
+
+    boolean isUpScroll = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                if (!isUpScroll) {
+                    return;
+                }
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     Log.d("ljz", "onScrollStateChanged: isFadeTips = " + adapter.isFadeTips() + ", lastVisibleItem = " + lastVisibleItem + ", getItemCount = " + adapter.getItemCount());
                     if (!adapter.isFadeTips() && lastVisibleItem + 1 == adapter.getItemCount()) {
@@ -92,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                isUpScroll = dy > 0;
                 Log.d("ljz", "onScrolled: lastVisibleItem = " + lastVisibleItem + ", dy = " + dy);
             }
         });
